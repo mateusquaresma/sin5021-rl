@@ -157,5 +157,4 @@ V = np.zeros(10)
 #     print("----- iteration = %s -----" % (i,))
 #     print(np.reshape(V, (2, 5)))
 
-
 iterate(states, actions, T, 15, (2, 5))
