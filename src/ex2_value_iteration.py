@@ -36,4 +36,4 @@ T = {
     (5, 3): [(5, 1.0, 0)],
 }
 
-iterate(states, actions, T, 15, (2, 3))
+iterate(states, actions, T, gamma=1, n=15, grid_shape=(2, 3))

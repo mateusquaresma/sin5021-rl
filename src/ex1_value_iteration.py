@@ -1,11 +1,12 @@
 
+"""
 # Applies the value iteration algorithm on a MDP of the following format
 # [[s0 s1 s2 s3 G] => probabilistic row, every action may execute with probability of 0.5
 # [s5 61 s7 s8 s9]] => deterministic row, every action executes with the probability of 1.0
 #
 # Rewards were fixed and not modeled in a matrix
 # For each cell the following actions are possible [North, South, East, West]
-
+"""
 
 import numpy as np
 from value_iteration import iterate
@@ -158,4 +159,4 @@ V = np.zeros(10)
 #     print(np.reshape(V, (2, 5)))
 
 
-iterate(states, actions, T, 15, (2, 5))
+iterate(states, actions, T, 1, 15, (2, 5))
