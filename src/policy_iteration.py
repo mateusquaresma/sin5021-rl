@@ -16,12 +16,13 @@ def compute_value(v, transitions, gamma):
     return pr_sum
 
 
-def iterate(states, actions, transitions, gamma=1, n=10, grid_shape=(2, 3)):
+def iterate(states, actions, transitions, goal, gamma=1, grid_shape=(2, 3)):
 
     max_values = np.zeros(len(states))
     argmax_values = np.zeros(len(states))
+    epsilon = 0.001
 
-    for i in range(n):
+    for i in range(100):
         temp_max_values = max_values.copy()
         temp_argmax_values = argmax_values.copy()
 
@@ -39,13 +40,23 @@ def iterate(states, actions, transitions, gamma=1, n=10, grid_shape=(2, 3)):
             temp_max_values[state] = vp
             temp_argmax_values[state] = ap
 
+        if np.abs(np.sum(max_values) - np.sum(temp_max_values)) < epsilon:
+            break
+
         max_values = temp_max_values
         argmax_values = temp_argmax_values
 
         print("----- iteration = %s (max) -----" % (i,))
         print(np.reshape(max_values, grid_shape))
         print("----- iteration = %s (argmax) -----" % (i,))
-        print(np.reshape(argmax_values, grid_shape))
+        mapping = {0: 'N', 1: 'S', 2: 'E', 3: 'W'}
+        printable_argmax = []
+        for (idx, k) in enumerate(argmax_values):
+            if idx == goal:
+                printable_argmax.append('0')
+            else:
+                printable_argmax.append(mapping[k])
+        print(np.reshape(np.array(printable_argmax), grid_shape))
 
 
 states = np.array(range(10))
@@ -104,4 +115,4 @@ T = {
     (9, 3): [(8, 1.0, reward)]
 }
 
-iterate(states, actions, T, 1, 15, (2, 5))
+iterate(states, actions, T, 4, 1, (2, 5))
