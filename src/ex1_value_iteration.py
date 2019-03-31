@@ -10,6 +10,7 @@
 
 import numpy as np
 from value_iteration import iterate
+from iterative_policy_evaluation import evaluate
 
 goal = 4
 s0 = 0
@@ -72,4 +73,6 @@ T = {
     (9, 3): [(8, 1.0, reward)],
 }
 
-iterate(states, actions, T, 1, 15, (2, 5))
+#iterate(states, actions, T, 1, 15, (2, 5))
+mdp_values = evaluate(states, actions, T, 1, 0.001, (2, 5))
+print(np.reshape(mdp_values, (2, 5)))

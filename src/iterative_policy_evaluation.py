@@ -16,28 +16,34 @@ def compute_value(v, transitions, gamma):
     return pr_sum
 
 
-def iterate(states, actions, transitions, gamma=1, n=10, grid_shape=(2, 3)):
+def evaluate(states, actions, transitions, gamma=1, epsilon=0.001, grid_shape=(2, 3)):
     """
     :param states:
     :param actions:
     :param transitions:
     :param gamma: discount factor
-    :param n: number of iterations
+    :param epsilon: max residual value
     :param grid_shape:
     :return:
     """
-    values = np.zeros(len(states))
-    for i in range(n):
-        temp_values = values.copy()
+    previous_values = np.zeros(len(states))
+    for i in range(50):
+        current_values = np.zeros(len(states))
         for state in states:
             temp = float('-inf')
             for action in actions:
                 possible_transitions = transitions[(state, action)]
-                max_for_action = compute_value(values, possible_transitions, gamma)
+                max_for_action = compute_value(previous_values, possible_transitions, gamma)
                 temp = max([temp, max_for_action])
 
-            temp_values[state] = temp
+            current_values[state] = temp
 
-        values = temp_values
-        print("----- iteration = %s -----" % (i,))
-        print(np.reshape(values, grid_shape))
+        residuals = np.abs(current_values - previous_values)
+        previous_values = current_values
+        # print("----- iteration = %s -----" % (i,))
+        # print(np.reshape(previous_values, grid_shape))
+
+        if np.max(residuals) < epsilon:
+            break
+
+    return previous_values
