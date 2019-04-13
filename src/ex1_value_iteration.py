@@ -10,7 +10,7 @@
 
 import numpy as np
 from value_iteration import iterate
-from iterative_policy_evaluation import evaluate
+from iterative_policy_evaluation_1 import evaluate
 
 goal = 4
 s0 = 0
