@@ -16,7 +16,7 @@ def compute_q_value(v, transitions, gamma):
     return pr_sum
 
 
-def evaluate(states, policy, gamma=1.0, epsilon=0.001, grid_shape=(2, 3)):
+def evaluate(states, policy, gamma=0.99, epsilon=0.01):
     """
     :param states:
     :param actions:
@@ -40,7 +40,7 @@ def evaluate(states, policy, gamma=1.0, epsilon=0.001, grid_shape=(2, 3)):
         if np.max(residuals) < epsilon:
             break
 
-    return actual_values, np.sum(actual_values)
+    return actual_values
 
 
 reward = -1
@@ -70,10 +70,10 @@ policy_2 = {
     (9, 0): [(4, 1.0, reward)]
 }
 
-states = np.array(range(10))
-policy_1_values, value_1 = evaluate(states, policy_1, 0.9, 0.01, (2, 5))
-policy_2_values, value_2 = evaluate(states, policy_2, 0.9, 0.01, (2, 5))
-print(policy_1_values)
-print(value_1)
-print(policy_2_values)
-print(value_2)
+# states = np.array(range(10))
+# policy_1_values, value_1 = evaluate(states, policy_1, 0.9, 0.01)
+# policy_2_values, value_2 = evaluate(states, policy_2, 0.9, 0.01)
+# print(policy_1_values)
+# print(value_1)
+# print(policy_2_values)
+# print(value_2)

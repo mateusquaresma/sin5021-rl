@@ -9,7 +9,7 @@
 """
 
 import numpy as np
-from value_iteration import iterate
+from value_iteration_2 import apply_value_iteration
 from iterative_policy_evaluation_1 import evaluate
 
 goal = 4
@@ -73,6 +73,8 @@ T = {
     (9, 3): [(8, 1.0, reward)],
 }
 
-#iterate(states, actions, T, 1, 15, (2, 5))
-mdp_values = evaluate(states, actions, T, 1, 0.001, (2, 5))
+# iterate(states, actions, T, 1, 15, (2, 5))
+mdp_values, arg_values = apply_value_iteration(states, actions, T, 1)
+# mdp_values = evaluate(states, actions, T, 1, 0.001, (2, 5))
 print(np.reshape(mdp_values, (2, 5)))
+print(np.reshape(arg_values, (2, 5)))
