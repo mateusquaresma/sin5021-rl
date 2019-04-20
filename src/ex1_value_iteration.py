@@ -9,7 +9,7 @@
 """
 
 import numpy as np
-from value_iteration_2 import apply_value_iteration
+from value_iteration import apply_value_iteration
 from iterative_policy_evaluation_1 import evaluate
 
 goal = 4

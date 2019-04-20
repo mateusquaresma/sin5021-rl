@@ -1,5 +1,5 @@
 import numpy as np
-from value_iteration import iterate
+from value_iteration_prev import iterate
 
 states = np.array(range(6))
 actions = np.array(range(4))

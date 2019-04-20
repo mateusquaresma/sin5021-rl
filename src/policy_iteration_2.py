@@ -1,7 +1,7 @@
 import numpy as np
 from iterative_policy_evaluation import evaluate
 from utils import compute_q_value
-from value_iteration_2 import apply_value_iteration
+from value_iteration import apply_value_iteration
 
 
 def build_new_policy(argmax_values):
