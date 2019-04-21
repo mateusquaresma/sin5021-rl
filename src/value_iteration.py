@@ -20,12 +20,15 @@ def apply_value_iteration(states, actions, transitions, gamma=0.999, epsilon=0.0
             temp = float('-inf')
             action_star = float('-inf')
             for action in actions:
-                possible_transitions = transitions[(state, action)]
-                q_value = compute_q_value(values, possible_transitions, gamma)
+                try:
+                    possible_transitions = transitions[(state, action)]
+                    q_value = compute_q_value(values, possible_transitions, gamma)
 
-                if q_value > temp:
-                    temp = q_value
-                    action_star = action
+                    if q_value > temp:
+                        temp = q_value
+                        action_star = action
+                except KeyError:
+                    pass
 
             temp_values[state] = temp
             temp_arg_values[state] = action_star
@@ -36,6 +39,8 @@ def apply_value_iteration(states, actions, transitions, gamma=0.999, epsilon=0.0
 
         if residuals < epsilon:
             break
+        else:
+            print("residual = %s; epsilon=%s" % (residuals, epsilon))
 
     return values, arg_values
 
