@@ -4,6 +4,13 @@ import pprint
 
 def read_env_file(env_number, action_number_list):
     T = {}
+    rewards = []
+    with open('../resources/Ambiente%s/Rewards.txt' % (env_number, )) as rewards_file:
+        r_env = csv.reader(rewards_file)
+        for row in r_env:
+            reward = float(row[0].strip())
+            rewards.append(reward)
+
     for action_number in action_number_list:
         with open('../resources/Ambiente%s/Action0%s.txt' % (env_number, action_number)) as csv_file:
             mdp_env = csv.reader(csv_file, delimiter=' ')
@@ -15,9 +22,9 @@ def read_env_file(env_number, action_number_list):
                 key = (s, action_number - 1)
                 if key in T:
                     action_list = T[key]
-                    action_list.append((sp, pr, -1))
+                    action_list.append((sp, pr, rewards[s]))
                 else:
-                    T[key] = [(sp, pr, -1)]
+                    T[key] = [(sp, pr, rewards[s])]
 
     return T
 

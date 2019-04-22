@@ -2,7 +2,7 @@ import numpy as np
 from utils import compute_q_value
 
 
-def apply_value_iteration(states, actions, transitions, gamma=0.999, epsilon=0.001):
+def apply_value_iteration(states, actions, transitions, gamma=0.999, epsilon=0.0001):
     """
     :param states:
     :param actions:
@@ -13,6 +13,7 @@ def apply_value_iteration(states, actions, transitions, gamma=0.999, epsilon=0.0
     """
     values = np.zeros(len(states))
     arg_values = np.zeros(len(states))
+    count = 0
     while True:
         temp_values = values.copy()
         temp_arg_values = arg_values.copy()
@@ -36,12 +37,14 @@ def apply_value_iteration(states, actions, transitions, gamma=0.999, epsilon=0.0
         residuals = np.abs(np.sum(values) - np.sum(temp_values))
         values = temp_values
         arg_values = temp_arg_values
+        count += 1
 
         if residuals < epsilon:
             break
         else:
             print("residual = %s; epsilon=%s" % (residuals, epsilon))
 
+    print('finished after %s iterations' % (count, ))
     return values, arg_values
 
 
