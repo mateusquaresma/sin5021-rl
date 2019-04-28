@@ -29,26 +29,20 @@ def iterate(states, actions, transitions, init_policy, epsilon=0.001):
 
         # tries to improve
 
-        # for state in states:
-        #     for action in actions:
-        #         possible_transitions = transitions[(state, action)]
-        #         q_value = compute_q_value(max_values, possible_transitions, 0.9)
-        #
-        #         if q_value > tmp_max_values[state]:
-        #             tmp_max_values[state] = q_value
-        #             tmp_argmax_values[state] = action
-
-        max_values, argmax_values = apply_value_iteration(states, actions, transitions)
+        max_values, argmax_values = apply_value_iteration(states, actions, transitions, epsilon=epsilon)
 
         new_policy = build_new_policy(argmax_values)
         new_policy_values = evaluate(states, new_policy)
 
-        if np.sum(new_policy_values) > np.sum(policy_values):
+        policy_values_sum = np.sum(policy_values)
+        new_policy_values_sum = np.sum(new_policy_values)
+
+        if new_policy_values_sum > policy_values_sum:
             policy = new_policy
             policy_values = new_policy_values
             policy_actions = argmax_values
 
-        if np.abs(np.sum(new_policy_values) - np.sum(policy_values)) < epsilon:
+        if np.abs(new_policy_values_sum - policy_values_sum) < epsilon:
             break
 
     return policy, policy_actions

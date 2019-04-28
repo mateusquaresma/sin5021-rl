@@ -2,7 +2,7 @@ import numpy as np
 from utils import compute_q_value
 
 
-def apply_value_iteration(states, actions, transitions, gamma=0.999, epsilon=0.0001):
+def apply_value_iteration(states, actions, transitions, gamma=1, epsilon=0.0001):
     """
     :param states:
     :param actions:
