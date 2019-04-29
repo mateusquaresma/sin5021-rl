@@ -29,6 +29,6 @@ def read_env_file(env_number, action_number_list):
     return T
 
 
-transition_matrix = read_env_file(1, list(range(1, 7)))
-pp = pprint.PrettyPrinter(indent=3)
-pp.pprint(transition_matrix)
+# transition_matrix = read_env_file(1, list(range(1, 7)))
+# pp = pprint.PrettyPrinter(indent=3)
+# pp.pprint(transition_matrix)

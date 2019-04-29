@@ -19,15 +19,17 @@ def build_new_policy(transitions, argmax_values):
     return policy
 
 
-def apply_policy_iteration(states, actions, transitions, init_policy, goal_state=0, gamma=1.0, epsilon=0.001, grid_shape=(2, 3)):
+def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.001):
 
     # max_values = np.zeros(len(states))
     # argmax_values = np.zeros(len(states))
 
     policy = build_random_policy(states, actions, transitions)
-    policy_values = evaluate(states, policy)
+    policy_values = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
     policy_actions = np.zeros(len(states))
+    count = 0
     while True:
+        count += 1
         new_policy_values = policy_values.copy()
         new_policy_argmax_values = policy_actions.copy()
 
@@ -44,106 +46,95 @@ def apply_policy_iteration(states, actions, transitions, init_policy, goal_state
                     vp = max_for_action
                     ap = action
 
-            print(state)
             new_policy_values[state] = vp
             new_policy_argmax_values[state] = ap
+
+        policy_values = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
+        new_policy = build_new_policy(transitions, new_policy_argmax_values)
+        new_policy_values = evaluate(states, new_policy, gamma=gamma, epsilon=epsilon)
 
         policy_values_sum = np.sum(policy_values)
         new_policy_values_sum = np.sum(new_policy_values)
 
         if new_policy_values_sum > policy_values_sum:
-            policy = build_new_policy(transitions, new_policy_argmax_values)
+            policy = new_policy
             policy_values = new_policy_values
             policy_actions = new_policy_argmax_values
 
         if np.abs(new_policy_values_sum - policy_values_sum) < epsilon:
             break
-
-        # policy_values = temp_max_values
-        # policy_actions = temp_argmax_values
-
-        # print("----- iteration = %s (max) -----" % (i,))
-        # print(np.reshape(max_values, grid_shape))
-        # print("----- iteration = %s (argmax) -----" % (i,))
-        # mapping = {0: 'N', 1: 'S', 2: 'E', 3: 'W'}
-        # printable_argmax = []
-        # for (idx, k) in enumerate(argmax_values):
-        #     if idx == goal_state:
-        #         printable_argmax.append('0')
-        #     else:
-        #         printable_argmax.append(mapping[k])
-        # print(np.reshape(np.array(printable_argmax), grid_shape))
+    print("convergence in %s iterations" % (count, ))
     return policy, policy_actions
 
 
-states = np.array(range(10))
-actions = np.array(range(4))  # North, South, East, West
-reward = -1
+# states = np.array(range(10))
+# actions = np.array(range(4))  # North, South, East, West
+# reward = -1
+#
+# T = {
+#     (0, 0): [(0, 1.0, reward)],
+#     (0, 1): [(5, 0.5, reward), (0, 0.5, reward)],
+#     (0, 2): [(1, 0.5, reward), (0, 0.5, reward)],
+#     (0, 3): [(0, 1.0, reward)],
+#
+#     (1, 0): [(1, 1.0, reward)],
+#     (1, 1): [(6, 0.5, reward), (1, 0.5, reward)],
+#     (1, 2): [(2, 0.5, reward), (1, 0.5, reward)],
+#     (1, 3): [(0, 0.5, reward), (1, 0.5, reward)],
+#
+#     (2, 0): [(2, 1.0, reward)],
+#     (2, 1): [(7, 0.5, reward), (2, 0.5, reward)],
+#     (2, 2): [(3, 0.5, reward), (2, 0.5, reward)],
+#     (2, 3): [(1, 0.5, reward), (2, 0.5, reward)],
+#
+#     (3, 0): [(3, 1.0, reward)],
+#     (3, 1): [(8, 0.5, reward), (3, 0.5, reward)],
+#     (3, 2): [(4, 0.5, reward), (3, 0.5, reward)],
+#     (3, 3): [(2, 0.5, reward), (3, 0.5, reward)],
+#
+#     (4, 0): [(4, 1.0, 0)],
+#     (4, 1): [(4, 1.0, 0)],
+#     (4, 2): [(4, 1.0, 0)],
+#     (4, 3): [(4, 1.0, 0)],
+#
+#     (5, 0): [(0, 1.0, reward)],
+#     (5, 1): [(5, 1.0, reward)],
+#     (5, 2): [(6, 1.0, reward)],
+#     (5, 3): [(5, 1.0, reward)],
+#
+#     (6, 0): [(1, 1.0, reward)],
+#     (6, 1): [(6, 1.0, reward)],
+#     (6, 2): [(7, 1.0, reward)],
+#     (6, 3): [(5, 1.0, reward)],
+#
+#     (7, 0): [(2, 1.0, reward)],
+#     (7, 1): [(7, 1.0, reward)],
+#     (7, 2): [(8, 1.0, reward)],
+#     (7, 3): [(6, 1.0, reward)],
+#
+#     (8, 0): [(3, 1.0, reward)],
+#     (8, 1): [(8, 1.0, reward)],
+#     (8, 2): [(9, 1.0, reward)],
+#     (8, 3): [(7, 1.0, reward)],
+#
+#     (9, 0): [(4, 1.0, reward)],
+#     (9, 1): [(9, 1.0, reward)],
+#     (9, 2): [(9, 1.0, reward)],
+#     (9, 3): [(8, 1.0, reward)]
+# }
+#
+# reward = -1
+# policy_1 = {
+#     (0, 2): [(1, 0.5, reward), (0, 0.5, reward)],
+#     (1, 2): [(2, 0.5, reward), (1, 0.5, reward)],
+#     (2, 2): [(3, 0.5, reward), (2, 0.5, reward)],
+#     (3, 2): [(4, 0.5, reward), (3, 0.5, reward)],
+#     (4, 0): [(4, 1.0, 0)],
+#     (5, 2): [(6, 1.0, reward)],
+#     (6, 2): [(7, 1.0, reward)],
+#     (7, 2): [(8, 1.0, reward)],
+#     (8, 2): [(9, 1.0, reward)],
+#     (9, 0): [(4, 1.0, reward)]
+# }
 
-T = {
-    (0, 0): [(0, 1.0, reward)],
-    (0, 1): [(5, 0.5, reward), (0, 0.5, reward)],
-    (0, 2): [(1, 0.5, reward), (0, 0.5, reward)],
-    (0, 3): [(0, 1.0, reward)],
-
-    (1, 0): [(1, 1.0, reward)],
-    (1, 1): [(6, 0.5, reward), (1, 0.5, reward)],
-    (1, 2): [(2, 0.5, reward), (1, 0.5, reward)],
-    (1, 3): [(0, 0.5, reward), (1, 0.5, reward)],
-
-    (2, 0): [(2, 1.0, reward)],
-    (2, 1): [(7, 0.5, reward), (2, 0.5, reward)],
-    (2, 2): [(3, 0.5, reward), (2, 0.5, reward)],
-    (2, 3): [(1, 0.5, reward), (2, 0.5, reward)],
-
-    (3, 0): [(3, 1.0, reward)],
-    (3, 1): [(8, 0.5, reward), (3, 0.5, reward)],
-    (3, 2): [(4, 0.5, reward), (3, 0.5, reward)],
-    (3, 3): [(2, 0.5, reward), (3, 0.5, reward)],
-
-    (4, 0): [(4, 1.0, 0)],
-    (4, 1): [(4, 1.0, 0)],
-    (4, 2): [(4, 1.0, 0)],
-    (4, 3): [(4, 1.0, 0)],
-
-    (5, 0): [(0, 1.0, reward)],
-    (5, 1): [(5, 1.0, reward)],
-    (5, 2): [(6, 1.0, reward)],
-    (5, 3): [(5, 1.0, reward)],
-
-    (6, 0): [(1, 1.0, reward)],
-    (6, 1): [(6, 1.0, reward)],
-    (6, 2): [(7, 1.0, reward)],
-    (6, 3): [(5, 1.0, reward)],
-
-    (7, 0): [(2, 1.0, reward)],
-    (7, 1): [(7, 1.0, reward)],
-    (7, 2): [(8, 1.0, reward)],
-    (7, 3): [(6, 1.0, reward)],
-
-    (8, 0): [(3, 1.0, reward)],
-    (8, 1): [(8, 1.0, reward)],
-    (8, 2): [(9, 1.0, reward)],
-    (8, 3): [(7, 1.0, reward)],
-
-    (9, 0): [(4, 1.0, reward)],
-    (9, 1): [(9, 1.0, reward)],
-    (9, 2): [(9, 1.0, reward)],
-    (9, 3): [(8, 1.0, reward)]
-}
-
-reward = -1
-policy_1 = {
-    (0, 2): [(1, 0.5, reward), (0, 0.5, reward)],
-    (1, 2): [(2, 0.5, reward), (1, 0.5, reward)],
-    (2, 2): [(3, 0.5, reward), (2, 0.5, reward)],
-    (3, 2): [(4, 0.5, reward), (3, 0.5, reward)],
-    (4, 0): [(4, 1.0, 0)],
-    (5, 2): [(6, 1.0, reward)],
-    (6, 2): [(7, 1.0, reward)],
-    (7, 2): [(8, 1.0, reward)],
-    (8, 2): [(9, 1.0, reward)],
-    (9, 0): [(4, 1.0, reward)]
-}
-
-# apply_policy_iteration(states, actions, T, policy_1, 4, 0.99, 0.01, (2, 5))
+# apply_policy_iteration(states, actions, T, 0.99, 0.01)
