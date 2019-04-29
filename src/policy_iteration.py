@@ -3,18 +3,33 @@ from iterative_policy_evaluation import evaluate
 from utils import compute_q_value
 
 
-def iterate(states, actions, transitions, init_policy, goal_state=0, gamma=1.0, epsilon=0.001, grid_shape=(2, 3)):
+def build_random_policy(states, actions, transitions):
+    policy = {}
+    random_actions = np.random.randint(min(actions), max(actions) + 1, len(states))
 
-    max_values = np.zeros(len(states))
-    argmax_values = np.zeros(len(states))
+    for s, a in list(zip(states, random_actions)):
+        policy[(s, a)] = transitions[(s, a)]
+    return policy
 
-    for i in range(100):
-        temp_max_values = max_values.copy()
-        temp_argmax_values = argmax_values.copy()
 
-        policy = init_policy
-        policy_values = evaluate(states, policy)
-        policy_actions = []
+def build_new_policy(transitions, argmax_values):
+    policy = {}
+    for s, a in enumerate(argmax_values):
+        policy[(s, a)] = transitions[(s, a)]
+    return policy
+
+
+def apply_policy_iteration(states, actions, transitions, init_policy, goal_state=0, gamma=1.0, epsilon=0.001, grid_shape=(2, 3)):
+
+    # max_values = np.zeros(len(states))
+    # argmax_values = np.zeros(len(states))
+
+    policy = build_random_policy(states, actions, transitions)
+    policy_values = evaluate(states, policy)
+    policy_actions = np.zeros(len(states))
+    while True:
+        new_policy_values = policy_values.copy()
+        new_policy_argmax_values = policy_actions.copy()
 
         # tries to improve
 
@@ -23,32 +38,42 @@ def iterate(states, actions, transitions, init_policy, goal_state=0, gamma=1.0, 
             ap = -1  # a' = π(s) = best action
             for action in actions:
                 possible_transitions = transitions[(state, action)]
-                max_for_action = compute_q_value(max_values, possible_transitions, gamma)
+                max_for_action = compute_q_value(policy_values, possible_transitions, gamma)
                 # temp = max([temp, max_for_action])
                 if max_for_action > vp:
                     vp = max_for_action
                     ap = action
 
-            temp_max_values[state] = vp
-            temp_argmax_values[state] = ap
+            print(state)
+            new_policy_values[state] = vp
+            new_policy_argmax_values[state] = ap
 
-        if np.abs(np.sum(max_values) - np.sum(temp_max_values)) < epsilon:
+        policy_values_sum = np.sum(policy_values)
+        new_policy_values_sum = np.sum(new_policy_values)
+
+        if new_policy_values_sum > policy_values_sum:
+            policy = build_new_policy(transitions, new_policy_argmax_values)
+            policy_values = new_policy_values
+            policy_actions = new_policy_argmax_values
+
+        if np.abs(new_policy_values_sum - policy_values_sum) < epsilon:
             break
 
-        max_values = temp_max_values
-        argmax_values = temp_argmax_values
+        # policy_values = temp_max_values
+        # policy_actions = temp_argmax_values
 
-        print("----- iteration = %s (max) -----" % (i,))
-        print(np.reshape(max_values, grid_shape))
-        print("----- iteration = %s (argmax) -----" % (i,))
-        mapping = {0: 'N', 1: 'S', 2: 'E', 3: 'W'}
-        printable_argmax = []
-        for (idx, k) in enumerate(argmax_values):
-            if idx == goal_state:
-                printable_argmax.append('0')
-            else:
-                printable_argmax.append(mapping[k])
-        print(np.reshape(np.array(printable_argmax), grid_shape))
+        # print("----- iteration = %s (max) -----" % (i,))
+        # print(np.reshape(max_values, grid_shape))
+        # print("----- iteration = %s (argmax) -----" % (i,))
+        # mapping = {0: 'N', 1: 'S', 2: 'E', 3: 'W'}
+        # printable_argmax = []
+        # for (idx, k) in enumerate(argmax_values):
+        #     if idx == goal_state:
+        #         printable_argmax.append('0')
+        #     else:
+        #         printable_argmax.append(mapping[k])
+        # print(np.reshape(np.array(printable_argmax), grid_shape))
+    return policy, policy_actions
 
 
 states = np.array(range(10))
@@ -121,4 +146,4 @@ policy_1 = {
     (9, 0): [(4, 1.0, reward)]
 }
 
-iterate(states, actions, T, policy_1, 4, 0.99, 0.01, (2, 5))
+# apply_policy_iteration(states, actions, T, policy_1, 4, 0.99, 0.01, (2, 5))
