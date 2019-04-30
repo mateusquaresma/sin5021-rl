@@ -1,27 +1,21 @@
 import numpy as np
 from iterative_policy_evaluation import evaluate
-from utils import compute_q_value
 from value_iteration import apply_value_iteration
+from utils import build_new_policy
+from utils import build_random_policy
 
 
-def build_new_policy(argmax_values):
-    policy = {}
-    for s, a in enumerate(argmax_values):
-        policy[(s, a)] = T[(s, a)]
-    return policy
-
-
-def iterate(states, actions, transitions, init_policy, epsilon=0.001):
+def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.001):
 
     max_values = np.zeros(len(states))
     argmax_values = np.zeros(len(states))
 
     # evaluate initial policy - evaluate(states, policy_2, 0.9, 0.01, (2, 5))
-    policy = init_policy
-    policy_values = evaluate(states, policy)
-    policy_actions = []
+    policy = build_random_policy(states, actions, transitions)
+    policy_actions = np.zeros(len(states))
+    count = 0
     while True:
-
+        count += 1
         tmp_max_values = max_values.copy()
         tmp_max_values.fill(float('-inf'))
         tmp_argmax_values = argmax_values.copy()
@@ -31,20 +25,21 @@ def iterate(states, actions, transitions, init_policy, epsilon=0.001):
 
         max_values, argmax_values = apply_value_iteration(states, actions, transitions, epsilon=epsilon)
 
-        new_policy = build_new_policy(argmax_values)
-        new_policy_values = evaluate(states, new_policy)
+        policy_values = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
+        new_policy = build_new_policy(transitions, argmax_values)
+        new_policy_values = evaluate(states, new_policy, gamma=gamma, epsilon=epsilon)
 
         policy_values_sum = np.sum(policy_values)
         new_policy_values_sum = np.sum(new_policy_values)
 
         if new_policy_values_sum > policy_values_sum:
             policy = new_policy
-            policy_values = new_policy_values
             policy_actions = argmax_values
 
         if np.abs(new_policy_values_sum - policy_values_sum) < epsilon:
             break
 
+    print("convergence in %s iterations" % (count, ))
     return policy, policy_actions
 
 
@@ -129,7 +124,7 @@ T = {
 
 states = np.array(range(10))
 actions = np.array(range(4))
-v, p_actions = iterate(states, actions, T, policy_1)
+v, p_actions = apply_policy_iteration(states, actions, T)
 pvs = evaluate(states, v)
 print(v)
 print(np.reshape(p_actions, (2, 5)))

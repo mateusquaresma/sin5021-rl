@@ -1,22 +1,8 @@
 import numpy as np
 from iterative_policy_evaluation import evaluate
 from utils import compute_q_value
-
-
-def build_random_policy(states, actions, transitions):
-    policy = {}
-    random_actions = np.random.randint(min(actions), max(actions) + 1, len(states))
-
-    for s, a in list(zip(states, random_actions)):
-        policy[(s, a)] = transitions[(s, a)]
-    return policy
-
-
-def build_new_policy(transitions, argmax_values):
-    policy = {}
-    for s, a in enumerate(argmax_values):
-        policy[(s, a)] = transitions[(s, a)]
-    return policy
+from utils import build_new_policy
+from utils import build_random_policy
 
 
 def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.001):
