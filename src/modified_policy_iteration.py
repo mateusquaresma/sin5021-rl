@@ -23,7 +23,7 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
 
         # tries to improve
 
-        max_values, argmax_values = apply_value_iteration(states, actions, transitions, epsilon=epsilon)
+        max_values, argmax_values = apply_value_iteration(states, actions, transitions, gamma=gamma, epsilon=epsilon)
 
         policy_values = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
         new_policy = build_new_policy(transitions, argmax_values)

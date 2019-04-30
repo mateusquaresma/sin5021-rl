@@ -11,7 +11,7 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
     # argmax_values = np.zeros(len(states))
 
     policy = build_random_policy(states, actions, transitions)
-    policy_values = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
+    policy_values = np.zeros(len(states))
     policy_actions = np.zeros(len(states))
     count = 0
     while True:
@@ -47,7 +47,10 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
             policy_values = new_policy_values
             policy_actions = new_policy_argmax_values
 
-        if np.abs(new_policy_values_sum - policy_values_sum) < epsilon:
+        residual = np.abs(new_policy_values_sum - policy_values_sum)
+        print("residual = %s; epsilon=%s" % (residual, epsilon))
+
+        if residual < epsilon:
             break
     print("convergence in %s iterations" % (count, ))
     return policy, policy_actions
