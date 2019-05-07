@@ -78,3 +78,4 @@ mdp_values, arg_values = apply_value_iteration(states, actions, T, 1)
 # mdp_values = evaluate(states, actions, T, 1, 0.001, (2, 5))
 print(np.reshape(mdp_values, (2, 5)))
 print(np.reshape(arg_values, (2, 5)))
+

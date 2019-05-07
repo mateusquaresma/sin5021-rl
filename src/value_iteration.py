@@ -41,8 +41,8 @@ def apply_value_iteration(states, actions, transitions, gamma=0.9999, epsilon=0.
 
         if residuals < epsilon:
             break
-        else:
-            print("residual = %s; epsilon=%s" % (residuals, epsilon))
+        # else:
+        #     print("residual = %s; epsilon=%s" % (residuals, epsilon))
 
     print('finished after %s iterations' % (count, ))
     return values, arg_values

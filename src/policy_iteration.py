@@ -48,12 +48,12 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
             policy_actions = new_policy_argmax_values
 
         residual = np.abs(new_policy_values_sum - policy_values_sum)
-        print("residual = %s; epsilon=%s" % (residual, epsilon))
+        # print("residual = %s; epsilon=%s" % (residual, epsilon))
 
         if residual < epsilon:
             break
     print("convergence in %s iterations" % (count, ))
-    return policy, policy_actions
+    return policy_values, policy_actions
 
 
 # states = np.array(range(10))

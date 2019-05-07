@@ -13,4 +13,4 @@ actions_by_floor = np.reshape(arg_values, (11, 135))
 for fl in actions_by_floor:
     print(np.reshape(fl, (9, 15)))
 
-dr.draw_policy(values_by_floor, grid_shape=(9, 15))
+dr.draw_policy(values_by_floor, actions_by_floor, grid_shape=(9, 15))
