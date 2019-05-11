@@ -16,9 +16,12 @@ for gamma in gammas:
     a_data = np.reshape(arg_values, (9, 15))
     # print(data)
     # print(a_data)
-    # dr.draw_policy([data], [a_data], ncols=1)
+    dr.draw_policy([data], [a_data], ncols=1)
 
-# dr.draw_policy([np.reshape(np.random.randn(135), (9, 15))], ncols=1)
+# a_data = np.zeros(135)
+# a_data.fill(-1)
+# print(a_data)
+# dr.draw_policy([np.reshape(np.random.randn(135), (9, 15))], [np.reshape(a_data, (9, 15))], ncols=1)
 
 
 

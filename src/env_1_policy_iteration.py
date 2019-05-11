@@ -4,7 +4,7 @@ from env_reader import read_env_file
 import policy_drawer as dr
 
 epsilon = 1e-10
-gammas = [0.5, 0.6, 0.7, 0.8, 0.9]
+gammas = [0.5, 0.6, 0.7, 0.8, 0.9, 0.99, 0.999]
 for gamma in gammas:
     states = np.array(range(135))
     actions = np.array(range(6))
@@ -15,4 +15,5 @@ for gamma in gammas:
     a_data = np.reshape(arg_values, (9, 15))
     # print(data)
     # print(a_data)
-    # dr.draw_policy([mdp_values], [arg_values], ncols=1)
+    file_name = 'policy-%s' % (gamma, )
+    dr.draw_policy([mdp_values], [arg_values], ncols=1, file_name_prefix=file_name)
