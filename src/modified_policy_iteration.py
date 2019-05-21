@@ -25,9 +25,9 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
 
         max_values, argmax_values = apply_value_iteration(states, actions, transitions, gamma=gamma, epsilon=epsilon)
 
-        policy_values = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
+        policy_values, _ = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
         new_policy = build_new_policy(transitions, argmax_values)
-        new_policy_values = evaluate(states, new_policy, gamma=gamma, epsilon=epsilon)
+        new_policy_values, _ = evaluate(states, new_policy, gamma=gamma, epsilon=epsilon)
 
         policy_values_sum = np.sum(policy_values)
         new_policy_values_sum = np.sum(new_policy_values)
@@ -125,7 +125,7 @@ T = {
 states = np.array(range(10))
 actions = np.array(range(4))
 v, p_actions = apply_policy_iteration(states, actions, T)
-pvs = evaluate(states, v)
+pvs, _ = evaluate(states, v)
 print(v)
 print(np.reshape(p_actions, (2, 5)))
 print(np.reshape(pvs, (2, 5)))

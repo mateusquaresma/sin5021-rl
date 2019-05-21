@@ -11,8 +11,8 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
     # argmax_values = np.zeros(len(states))
 
     policy = build_random_policy(states, actions, transitions)
-    policy_values = np.zeros(len(states))
-    policy_actions = np.zeros(len(states))
+    policy_values, _ = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
+    policy_actions = [a for (s, a), _ in policy.items()]
     count = 0
     while True:
         count += 1
@@ -20,10 +20,9 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
         new_policy_argmax_values = policy_actions.copy()
 
         # tries to improve
-
         for state in states:
-            vp = float('-inf')  # v'= v(s') best value
-            ap = -1  # a' = π(s) = best action
+            vp = policy_values[state]  # v'= v(s') best value
+            ap = policy_actions[state]  # a' = π(s) = best action
             for action in actions:
                 possible_transitions = transitions[(state, action)]
                 max_for_action = compute_q_value(policy_values, possible_transitions, gamma)
@@ -35,9 +34,10 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
             new_policy_values[state] = vp
             new_policy_argmax_values[state] = ap
 
-        policy_values = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
+        # policy_values = evaluate(states, policy, gamma=gamma, epsilon=epsilon)
         new_policy = build_new_policy(transitions, new_policy_argmax_values)
-        new_policy_values = evaluate(states, new_policy, gamma=gamma, epsilon=epsilon)
+        new_policy_values, cnt = evaluate(states, new_policy, gamma=gamma, epsilon=epsilon)
+        count += cnt
 
         policy_values_sum = np.sum(policy_values)
         new_policy_values_sum = np.sum(new_policy_values)
@@ -52,7 +52,7 @@ def apply_policy_iteration(states, actions, transitions, gamma=0.999, epsilon=0.
 
         if residual < epsilon:
             break
-    print("convergence in %s iterations" % (count, ))
+    print("convergence in %s iterations; gamma=%s, epsilon=%s" % (count, gamma, epsilon))
     return policy_values, policy_actions
 
 

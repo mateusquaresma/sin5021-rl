@@ -13,7 +13,8 @@ def evaluate(states, policy, gamma=0.99, epsilon=0.01):
     :return:
     """
     actual_values = np.zeros(len(states))
-    for i in range(50):
+
+    for count in range(50):
         current_values = np.zeros(len(states))
         for (state, action), possible_transitions in policy.items():
             current_values[state] = compute_q_value(actual_values, possible_transitions, gamma)
@@ -26,7 +27,7 @@ def evaluate(states, policy, gamma=0.99, epsilon=0.01):
         if np.max(residuals) < epsilon:
             break
 
-    return actual_values
+    return actual_values, count
 
 
 reward = -1
